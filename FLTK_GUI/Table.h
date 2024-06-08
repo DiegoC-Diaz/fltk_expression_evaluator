@@ -115,8 +115,15 @@ void WidgetTable::draw_cell(TableContext context,
     case CONTEXT_COL_HEADER:
         fl_push_clip(X, Y, W, H);
         {
+
             static char s[40];
-            snprintf(s,sizeof(s), "Column %d", C);
+            if (C == 0) {
+                snprintf(s, sizeof(s), "Token", 0);
+            }
+            else {
+                snprintf(s, sizeof(s), "Varaible", 0);
+            }
+        
             fl_draw_box(FL_THIN_UP_BOX, X, Y, W, H, col_header_color());
             fl_color(FL_BLACK);
             fl_draw(s, X, Y, W, H, FL_ALIGN_CENTER);

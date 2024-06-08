@@ -7,6 +7,7 @@
 #include <FL/Fl_Multiline_Input.H>
 #include <FL/Fl_Text_Buffer.H>
 #include <FL/Fl_Multiline_Output.H>
+#include "Evaluator.h"
 #include<iostream>
 #include "Table.h"
 
@@ -70,5 +71,6 @@ int main(int argc, char** argv) {
 
 	window->end();
 	window->show(argc, argv);
+	//run_val();
 	return Fl::run();
 }

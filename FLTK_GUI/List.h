@@ -3,8 +3,14 @@
 #include <FL/Fl_Input.H>
 
 using namespace std;
-
+/*Bloody-BadBuy 
+* https://gist.github.com/Bloody-Badboy/08d71fa18755bb22cfab7950630e0339
+* Base para crear la Link List para guardar las variables...
+* //
+*/
 template<class T>
+
+
 class Node {
 public:
     Fl_Input * token;
