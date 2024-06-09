@@ -11,14 +11,63 @@
 #include <vector>
 #include <list>
 
-int precedence(char op) {
+
+
+
+
+class Evaluator {
+
+
+
+public:
+    Evaluator();
+    std::map<std::string, double> variables;
+    std::list<std::string> history;
+    std::string expression;
+    std::map<std::string, double>  constants;
+    bool inputExpression(const char* exp);
+
+    std::string displayHistory();
+
+private:
+
+    int precedence(char op);
+
+    float applyOp(float a, float b, char op);
+
+    bool isOperator(const std::string& token);
+
+    std::vector<std::string> tokenize(const std::string& s, const std::map<std::string, double>& constants, std::map<std::string, double>& variables);
+
+    std::string infixToPostfix(const std::vector<std::string>& tokens);
+
+    std::map<std::string, double> loadConstants(const std::string& filename);
+
+    float evaluatePostfix(const std::string& postfix);
+
+    bool isValidExpression(const std::vector<std::string>& tokens);
+
+    bool hasConsecutiveOperators(const std::vector<std::string>& tokens);
+
+    
+
+    int run_val();
+    ~Evaluator();
+
+};
+
+
+Evaluator::Evaluator() {
+    constants = loadConstants("constants.txt");
+}
+int Evaluator::precedence(char op) {
     if (op == '+' || op == '-') return 1;
     if (op == '*' || op == '/' || op == '%') return 2;
     if (op == '^') return 3;
     return 0;
 }
 
-float applyOp(float a, float b, char op) {
+float Evaluator::applyOp(float a, float b, char op) {
     switch (op) {
     case '+': return a + b;
     case '-': return a - b;
@@ -30,11 +79,11 @@ float applyOp(float a, float b, char op) {
     }
 }
 
-bool isOperator(const std::string& token) {
+bool Evaluator::isOperator(const std::string& token) {
     return token == "+" || token == "-" || token == "*" || token == "/" || token == "%" || token == "^";
 }
 
-std::vector<std::string> tokenize(const std::string& s, const std::map<std::string, double>& constants, std::map<std::string, double>& variables) {
+std::vector<std::string>  Evaluator::tokenize(const std::string& s, const std::map<std::string, double>& constants, std::map<std::string, double>& variables) {
     std::vector<std::string> tokens;
     std::string current;
     for (char ch : s) {
@@ -67,7 +116,7 @@ std::vector<std::string> tokenize(const std::string& s, const std::map<std::stri
     return tokens;
 }
 
-std::string infixToPostfix(const std::vector<std::string>& tokens) {
+std::string  Evaluator::infixToPostfix(const std::vector<std::string>& tokens) {
     std::stack<std::string> stack;
     std::string postfix;
     std::cout << "\nConverting to Postfix:\n";
@@ -107,7 +156,7 @@ std::string infixToPostfix(const std::vector<std::string>& tokens) {
     return postfix;
 }
 
-std::map<std::string, double> loadConstants(const std::string& filename) {
+std::map<std::string, double>   Evaluator::loadConstants(const std::string& filename) {
     std::map<std::string, double> constants;
     std::ifstream file(filename);
     std::string line;
@@ -128,7 +177,7 @@ std::map<std::string, double> loadConstants(const std::string& filename) {
     return constants;
 }
 
-float evaluatePostfix(const std::string& postfix) {
+float  Evaluator::evaluatePostfix(const std::string& postfix) {
     std::stack<float> stack;
     std::istringstream iss(postfix);
     std::string token;
@@ -146,7 +195,7 @@ float evaluatePostfix(const std::string& postfix) {
 }
 
 
-bool isValidExpression(const std::vector<std::string>& tokens) {
+bool  Evaluator::isValidExpression(const std::vector<std::string>& tokens) {
     int openParentheses = 0;
 
     for (const auto& token : tokens) {
@@ -168,7 +217,7 @@ bool isValidExpression(const std::vector<std::string>& tokens) {
     return true;
 }
 
-bool hasConsecutiveOperators(const std::vector<std::string>& tokens) {
+bool  Evaluator::hasConsecutiveOperators(const std::vector<std::string>& tokens) {
     bool lastWasOperator = false;
     for (const auto& token : tokens) {
         if (isOperator(token)) {
@@ -184,9 +233,74 @@ bool hasConsecutiveOperators(const std::vector<std::string>& tokens) {
     return false;
 }
 
+inline bool Evaluator::inputExpression(const char* exp)
+{
+
+    std::string expression= exp;
+   
+    size_t equals = expression.find('=');
+    if (equals != std::string::npos) {
+        std::string varName = expression.substr(0, equals);
+        std::string valueExpr = expression.substr(equals + 1);
+
+        try {
+            auto tokens = tokenize(valueExpr, constants, variables);
+            if (hasConsecutiveOperators(tokens)) {
+                throw std::runtime_error("Invalid sequence of operators");
+            }
+            if (!isValidExpression(tokens)) {
+                return false; // If expression is not valid, skip further processing
+            }
+            std::string postfix = infixToPostfix(tokens);
+            float value = evaluatePostfix(postfix);
+            variables[varName] = value;
+            std::cout << "Variable " << varName << " set to " << value << std::endl;
+            return false;
+        }
+        catch (const std::exception& e) {
+            std::cerr << "Error setting variable: " << e.what() << std::endl;
+            return false;
+        }
+    }
+
+    try {
+        auto tokens = tokenize(expression, constants, variables);
+        if (hasConsecutiveOperators(tokens)) {
+            throw std::runtime_error("Invalid sequence of operators");
+        }
+        if (!isValidExpression(tokens)) {
+            return false; // If expression is not valid, skip further processing
+        }
+        std::string postfix = infixToPostfix(tokens);
+        float result = evaluatePostfix(postfix);
+        std::cout << "Result: " << result << std::endl;
+        std::cout << "Postfix Expression: " << postfix << std::endl;
+        history.push_back(expression + " = " + std::to_string(result));
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        return false;
+    }
 
 
-int  run_val() {
+    return true;
+}
+
+inline std::string Evaluator::displayHistory()
+{
+    std::cout << "History:\n";
+    std::string output="";
+    for (const auto& h : history) {
+        std::cout << h << std::endl;
+        output += h+"\n";
+    }
+    return  output;
+
+}
+
+
+
+int   Evaluator::run_val() {
     auto constants = loadConstants("constants.txt");
     std::map<std::string, double> variables;
     std::list<std::string> history;
@@ -251,4 +365,8 @@ int  run_val() {
     }
 
     return 0;
+}
+
+inline Evaluator::~Evaluator()
+{
 }

@@ -29,6 +29,10 @@ public:
         row_header_width(80);
         end();
     }
+
+    
+
+
     void show_contents() {
         Node<Fl_Input*>* current = values.getHead();
         while (current != nullptr) {
