@@ -30,7 +30,6 @@ public:
         end();
     }
 
-    
 
 
     void show_contents() {
@@ -42,6 +41,11 @@ public:
         }
 
     }
+
+    Node<Fl_Input*> * get_data() {
+        return values.getHead();
+    }
+
 
     ~WidgetTable() { }
     void SetSize(int newrows, int newcols) {

@@ -1,26 +1,27 @@
 #pragma
+#ifndef LIST_H
+#define LIST_H
 #include <iostream>
+using namespace std;
 #include <FL/Fl_Input.H>
 
-using namespace std;
-/*Bloody-BadBuy 
+
+/*Bloody-BadBuy
 * https://gist.github.com/Bloody-Badboy/08d71fa18755bb22cfab7950630e0339
 * Base para crear la Link List para guardar las variables...
 * //
 */
 template<class T>
-
-
 class Node {
 public:
-    Fl_Input * token;
+    Fl_Input* token;
     Fl_Input* value;
     Node<T>* next;
 
     Node();
     explicit Node(T val);
-  
-   
+
+
 };
 
 template<class T>
@@ -62,7 +63,7 @@ public:
     void addLast(E e);
     void remove(E e);
     void removeFirst();
-    void setValue(E e,int index);
+    void setValue(E e, int index);
     void removeLast();
     int size();
 
@@ -119,7 +120,7 @@ void LinkedList<E>::add(E e) {
     s++;
 }
 template<class E>
-void LinkedList<E>::setValue(E e,int index) {
+void LinkedList<E>::setValue(E e, int index) {
 
 
     if (head == nullptr) {
@@ -384,3 +385,4 @@ bool LinkedList<E>::contains(E e) {
     }
     return false;
 }
+#endif // EVALUATOR_H

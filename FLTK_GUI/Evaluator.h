@@ -1,5 +1,9 @@
 #pragma once
-#include <iostream>
+#ifndef EVALUATOR_H
+#define EVALUATOR_H
+
+
+//#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <stack>
@@ -10,28 +14,31 @@
 #include <limits>
 #include <vector>
 #include <list>
-
-
-
+#include <iostream>
+#include "List.h"
 
 
 class Evaluator {
-
-
-
 public:
+   
     Evaluator();
     std::map<std::string, double> variables;
     std::list<std::string> history;
     std::string expression;
     std::map<std::string, double>  constants;
     bool inputExpression(const char* exp);
+    double convertDouble(const std::string str);
 
+   
     std::string displayHistory();
+
+    void loadUserConstants(Node<Fl_Input*>* head);
 
 private:
 
     int precedence(char op);
+
+
 
     float applyOp(float a, float b, char op);
 
@@ -49,14 +56,33 @@ private:
 
     bool hasConsecutiveOperators(const std::vector<std::string>& tokens);
 
-    
-
     int run_val();
     ~Evaluator();
 
 };
 
+#endif // EVALUATOR_H
 
+double Evaluator::convertDouble(const std::string str){
+    //his Fucntion support sicentifc notation to double.
+    if (str == "") {
+        return 0;
+    }
+    double d = 0;
+ 
+  
+    try {
+        std::istringstream os(str);
+        os >> d;
+        std::cout << "se puede realizar la conversion\n";
+    }
+    catch (int n) {
+        std::cout << "NO se puede realizar la conversion\n";
+    }
+  
+
+    return d;
+}
 Evaluator::Evaluator() {
     constants = loadConstants("constants.txt");
 }
@@ -156,6 +182,18 @@ std::string  Evaluator::infixToPostfix(const std::vector<std::string>& tokens) {
     return postfix;
 }
 
+void Evaluator::loadUserConstants(Node<Fl_Input*>* head)
+{
+    variables.clear();
+    //Load cusotm user variables.
+    Node<Fl_Input*>* curr = head;
+    while (curr != nullptr) {
+        variables[curr->token->value()] = convertDouble(curr->value->value());
+        curr = curr->next;
+    }
+
+
+}
 std::map<std::string, double>   Evaluator::loadConstants(const std::string& filename) {
     std::map<std::string, double> constants;
     std::ifstream file(filename);
@@ -265,6 +303,8 @@ inline bool Evaluator::inputExpression(const char* exp)
 
     try {
         auto tokens = tokenize(expression, constants, variables);
+
+   
         if (hasConsecutiveOperators(tokens)) {
             throw std::runtime_error("Invalid sequence of operators");
         }
@@ -297,6 +337,8 @@ inline std::string Evaluator::displayHistory()
     return  output;
 
 }
+
+
 
 
 
@@ -370,3 +412,4 @@ int   Evaluator::run_val() {
 inline Evaluator::~Evaluator()
 {
 }
+

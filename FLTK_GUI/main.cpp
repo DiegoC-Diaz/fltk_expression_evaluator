@@ -15,6 +15,7 @@ struct Linker {
 	Fl_Multiline_Input* expression;
 	Fl_Multiline_Output* output;
 	Evaluator* evaluator;  // Replace SomeClass with your actual class
+	WidgetTable * table;
 
 
 };
@@ -47,9 +48,15 @@ void eval_expression_callback(Fl_Widget* widget, void * data) {
 	// Access the data
 	Fl_Multiline_Input* input = my_data->expression;
 	Evaluator* evaluator = my_data->evaluator;
+	WidgetTable* table = my_data->table;
+	//we need to add cusotm vairbales for user through the table.....
+
+	evaluator->loadUserConstants(table->get_data());
 	evaluator->inputExpression(input->value());
+
 	std::string output=evaluator->displayHistory();
 	display_hist_output(my_data->output, output);
+
 
 }
 void show_button_callback(Fl_Widget* widget, void* data) {
@@ -111,6 +118,8 @@ int main(int argc, char** argv) {
 
 	grid(20, input_expression);
 	WidgetTable * table =callTable(20, 120);
+	//link wisgetable to the linker
+	link->table = table;
 
 	//Test Display Varaible stored Button
 	Fl_Button* button_show = new Fl_Button(x-170,y-40, 170, 20, "Show");
