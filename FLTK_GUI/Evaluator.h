@@ -184,11 +184,11 @@ std::string  Evaluator::infixToPostfix(const std::vector<std::string>& tokens) {
 
 void Evaluator::loadUserConstants(Node<Fl_Input*>* head)
 {
-    variables.clear();
+    //variables.clear();
     //Load cusotm user variables.
     Node<Fl_Input*>* curr = head;
     while (curr != nullptr) {
-        variables[curr->token->value()] = convertDouble(curr->value->value());
+        constants[curr->token->value()] = convertDouble(curr->value->value());
         curr = curr->next;
     }
 

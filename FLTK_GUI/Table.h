@@ -148,7 +148,7 @@ void WidgetTable::draw_cell(TableContext context,
 }
 
 WidgetTable *  callTable(int x, int y) {
-    WidgetTable* table = new WidgetTable(x, y, 170, 390 - y, "Variables");
+    WidgetTable* table = new WidgetTable(x, y, 170, 390 - y, "Constantes del Usuario");
     table->SetSize(10, 2);
     table->show_contents();
     table->show_contents();
