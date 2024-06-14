@@ -26,10 +26,8 @@ public:
     std::list<std::string> history;
     std::string expression;
     std::map<std::string, double>  constants;
-    bool inputExpression(const char* exp);
+    bool inputExpression(const char* ex, bool mode);
     double convertDouble(const std::string str);
-
-   
     std::string displayHistory();
 
     void loadUserConstants(Node<Fl_Input*>* head);
@@ -169,6 +167,7 @@ std::string  Evaluator::infixToPostfix(const std::vector<std::string>& tokens) {
                 postfix += stack.top() + " ";
                 std::cout << "Popped from stack to output: " << stack.top() << " (Precedence)\n";
                 stack.pop();
+
             }
             stack.push(token);
             std::cout << "Pushed to stack: " << token << "\n";
@@ -271,35 +270,39 @@ bool  Evaluator::hasConsecutiveOperators(const std::vector<std::string>& tokens)
     return false;
 }
 
-inline bool Evaluator::inputExpression(const char* exp)
-{
+inline bool Evaluator::inputExpression(const char* exp,bool mode)
 
+{   
+
+    //voy a dividir el Input en dos partes una que evalue la funcion
     std::string expression= exp;
-   
-    size_t equals = expression.find('=');
-    if (equals != std::string::npos) {
-        std::string varName = expression.substr(0, equals);
-        std::string valueExpr = expression.substr(equals + 1);
+    if (mode) {
+        size_t equals = expression.find('=');
+        if (equals != std::string::npos) {
+            std::string varName = expression.substr(0, equals);
+            std::string valueExpr = expression.substr(equals + 1);
 
-        try {
-            auto tokens = tokenize(valueExpr, constants, variables);
-            if (hasConsecutiveOperators(tokens)) {
-                throw std::runtime_error("Invalid sequence of operators");
+            try {
+                auto tokens = tokenize(valueExpr, constants, variables);
+                if (hasConsecutiveOperators(tokens)) {
+                    throw std::runtime_error("Invalid sequence of operators");
+                }
+                if (!isValidExpression(tokens)) {
+                    return false; // If expression is not valid, skip further processing
+                }
+                std::string postfix = infixToPostfix(tokens);
+                float value = evaluatePostfix(postfix);
+                variables[varName] = value;
+                std::cout << "Variable " << varName << " set to " << value << std::endl;
+                return false;
             }
-            if (!isValidExpression(tokens)) {
-                return false; // If expression is not valid, skip further processing
+            catch (const std::exception& e) {
+                std::cerr << "Error setting variable: " << e.what() << std::endl;
+                return false;
             }
-            std::string postfix = infixToPostfix(tokens);
-            float value = evaluatePostfix(postfix);
-            variables[varName] = value;
-            std::cout << "Variable " << varName << " set to " << value << std::endl;
-            return false;
-        }
-        catch (const std::exception& e) {
-            std::cerr << "Error setting variable: " << e.what() << std::endl;
-            return false;
         }
     }
+   
 
     try {
         auto tokens = tokenize(expression, constants, variables);

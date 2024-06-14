@@ -10,14 +10,16 @@
 #include "Evaluator.h"
 #include<iostream>
 #include "Table.h"
+/*
+	Todo el coldigo comentado estara por eleminarse en siguientees versiones
+*/
 
 struct Linker {
 	Fl_Multiline_Input* expression;
 	Fl_Multiline_Output* output;
-	Evaluator* evaluator;  // Replace SomeClass with your actual class
-	WidgetTable * table;
-	Fl_Multiline_Output* variable_output;
-
+	Fl_Multiline_Output* postfix;
+	Fl_Multiline_Output* history;
+	Evaluator* evaluator; 
 
 };
 
@@ -45,25 +47,54 @@ void button_callback(Fl_Widget* widget, void* data) {
 
 void eval_expression_callback(Fl_Widget* widget, void * data) {
 	Linker* my_data = static_cast<Linker*>(data);
+	// Access the data
+	Fl_Multiline_Input* input = my_data->expression;
+	Evaluator* evaluator = my_data->evaluator;
+
+
+	//we need to add cusotm vairbales for user
+// through the table....
+// 
+//	evaluator->loadUserConstants(table->g;et_data());
+	std::string value = input->value();
+	evaluator->inputExpression(value.c_str(), false);
+	std::string prev = (my_data->history->value());
+
+	my_data->history->value((prev + "\n" + value).c_str());
+
+
+	std::string line="";
+	//We could had  to clean teh output
+	std::string output=evaluator->displayHistory();
+	display_hist_output(my_data->output, output);
+
+
+}
+
+void assign_expression_callback(Fl_Widget* widget, void* data) {
+	Linker* my_data = static_cast<Linker*>(data);
 
 	// Access the data
 	Fl_Multiline_Input* input = my_data->expression;
 	Evaluator* evaluator = my_data->evaluator;
-	WidgetTable* table = my_data->table;
-	Fl_Multiline_Output* variable_output = my_data->variable_output;
-	//we need to add cusotm vairbales for user
-// through the table.....
+	Fl_Multiline_Output* variable_output = my_data->output;
 
-	evaluator->loadUserConstants(table->get_data());
-	evaluator->inputExpression(input->value());
+	std::string value = input->value();
+	evaluator->inputExpression(value.c_str(), true);
+
+	std::string prev = (my_data->history->value());
+	my_data->history->value((prev + "\n" + value).c_str());
+
 	variable_output->value("");//We clean var output;
-	std::string line="";
+
+	std::string line = "";
+	//We could had  to clean teh output
 	for (auto it = evaluator->variables.begin(); it != evaluator->variables.end(); it++) {
-		line =line+ (it->first +"=" + std::to_string(it->second) + "\n");
+		line = line + (it->first + "=" + std::to_string(it->second) + "\n");
 		variable_output->value(line.c_str());
 	}
-	std::string output=evaluator->displayHistory();
-	display_hist_output(my_data->output, output);
+	//std::string output = evaluator->displayHistory();
+	//display_hist_output(my_data->output, output);
 
 
 }
@@ -75,6 +106,8 @@ void show_button_callback(Fl_Widget* widget, void* data) {
 }
 void grid(int x, Fl_Multiline_Input* in) {
 	//pi, e, g, c
+
+
 	Fl_Button* button_pi = new Fl_Button(x, 20, 170, 20, "pi");
 	Fl_Button* button_e = new Fl_Button(x, 20 + 20, 170, 20, "e");
 	Fl_Button* button_g = new Fl_Button(x, 20 + 40, 170, 20, "g");
@@ -105,8 +138,10 @@ int main(int argc, char** argv) {
 	//Fl_Light_Button* lbutton = new Fl_Light_Button(x, y, width, height);
 	Evaluator* evaluator = new Evaluator();
 	Linker*link= new Linker();
+	Linker* var_link = new Linker();
 	//We link the evaluator with the struct Linker
-	link->evaluator = evaluator;
+
+
 
 	Fl_Window* window = new Fl_Window(600, 400);
 
@@ -116,29 +151,33 @@ int main(int argc, char** argv) {
 	Fl_Multiline_Input* input_expression = new Fl_Multiline_Input((x / 2) - 100, 20, 200, 50, nullptr);
 	Fl_Button* button_eval = new Fl_Button((x / 2) - 100, 20 + 60, 170, 20, "Evaluate");
 	//We link the inut with Linke Struct.
-	link->expression = input_expression;
-	//attacth the our eval_expression_callback to the button
+
 	button_eval->type(FL_NORMAL_BUTTON);
 	button_eval->callback(eval_expression_callback, link);
 	Fl_Multiline_Output* out_put = new Fl_Multiline_Output((x / 2) - 100, (y / 2) - 100, 200, 390 - ((y / 2) - 100), nullptr);
-	//Atttach output to Linker Struct
-	link->output = out_put;
-	Fl_Multiline_Output* out_put_var= new Fl_Multiline_Output(x -200,20, 200, y-40, nullptr);
-	//Especific output for variables.
-	link->variable_output = out_put_var;
-
+	Fl_Multiline_Output* History =new Fl_Multiline_Output(x -200,20, 200, y-40, nullptr);
 	grid(20, input_expression);
-	WidgetTable * table =callTable(20, 120);
-	//link wisgetable to the linker
-	link->table = table;
+	Fl_Multiline_Input* asignation_input = new Fl_Multiline_Input(20,100,170,20,"");
+	Fl_Button* button_assing = new Fl_Button(20, 120, 170, 20, "Assign");
+	button_assing->type(FL_NORMAL_BUTTON);
+	button_assing->callback(assign_expression_callback, var_link);
 
-	//Test Display Varaible stored Button
+
+	Fl_Multiline_Output* asignation_output = new Fl_Multiline_Output(20, 140, 170, y - 120);
+
+	
 	Fl_Button* button_show = new Fl_Button(x-170,y-20, 170, 20, "Show");
-	button_show->type(FL_NORMAL_BUTTON);
-	button_show->callback(show_button_callback, table);
 
 
+	link->history = History;
+	link->evaluator = evaluator;
+	link->output = out_put;
+	link->expression = input_expression;
 
+	var_link->evaluator = evaluator;
+	var_link->output = asignation_output;
+	var_link->history = History;
+	var_link->expression = asignation_input;
 	window->end();
 	window->show(argc, argv);
 	return Fl::run();
