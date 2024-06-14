@@ -104,23 +104,18 @@ void show_button_callback(Fl_Widget* widget, void* data) {
 
 
 }
-void grid(int x, Fl_Multiline_Input* in) {
+void grid(int x, Fl_Multiline_Input* in,Evaluator *evaluator){
 	//pi, e, g, c
+	Fl_Multiline_Output * out=new Fl_Multiline_Output(x, 20, 170, 20 * 4);
+	std::string line;
+	for (auto it = evaluator->constants.begin(); it != evaluator->constants.end(); it++) {
+		line = line + (it->first + "=" + std::to_string(it->second) + "\n");
+		out->value(line.c_str());
+	}
 
 
-	Fl_Button* button_pi = new Fl_Button(x, 20, 170, 20, "pi");
-	Fl_Button* button_e = new Fl_Button(x, 20 + 20, 170, 20, "e");
-	Fl_Button* button_g = new Fl_Button(x, 20 + 40, 170, 20, "g");
-	Fl_Button* button_c = new Fl_Button(x, 20 + 60, 170, 20, "c");
-	
-	button_pi->type(FL_NORMAL_BUTTON);
-	button_g->type(FL_NORMAL_BUTTON);
-	button_e->type(FL_NORMAL_BUTTON);
-	button_c->type(FL_NORMAL_BUTTON);
-	button_pi->callback(button_callback, in);
-	button_e->callback(button_callback, in);
-	button_g->callback(button_callback, in);
-	button_c->callback(button_callback, in);
+
+
 }
 
 
@@ -156,7 +151,7 @@ int main(int argc, char** argv) {
 	button_eval->callback(eval_expression_callback, link);
 	Fl_Multiline_Output* out_put = new Fl_Multiline_Output((x / 2) - 100, (y / 2) - 100, 200, 390 - ((y / 2) - 100), nullptr);
 	Fl_Multiline_Output* History =new Fl_Multiline_Output(x -200,20, 200, y-40, nullptr);
-	grid(20, input_expression);
+	grid(20, input_expression,evaluator);
 	Fl_Multiline_Input* asignation_input = new Fl_Multiline_Input(20,100,170,20,"");
 	Fl_Button* button_assing = new Fl_Button(20, 120, 170, 20, "Assign");
 	button_assing->type(FL_NORMAL_BUTTON);
