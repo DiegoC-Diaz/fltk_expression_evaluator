@@ -9,7 +9,6 @@
 #include <FL/Fl_Multiline_Output.H>
 #include "Evaluator.h"
 #include<iostream>
-#include "Table.h"
 #include "evaluator.h"
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
@@ -184,12 +183,7 @@ void assign_expression_callback(Fl_Widget* widget, void* data) {
 
 
 }
-void show_button_callback(Fl_Widget* widget, void* data) {
-	WidgetTable* table = (WidgetTable*)data;
-	table->show_contents();
 
-
-}
 void grid(int x, Fl_Multiline_Input* in,Evaluator *evaluator){
 	//pi, e, g, c
 	Fl_Multiline_Output * out=new Fl_Multiline_Output(x, 20, 200, 20 * 4);
