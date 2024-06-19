@@ -137,8 +137,6 @@ std::string Evaluator::infixToPostfix(const std::vector<std::string>& tokens) {
         stack.pop();
     }
     std::cout << "Postfix Expression: " << postfix << "\n";
-    //Added this new line
-    posfixHistory.push_back(postfix);
     
     return postfix;
 }
@@ -331,6 +329,9 @@ bool Evaluator::inputExpression(const std::string& expression, bool isAssignment
             // Verificar errores durante la evaluación antes de convertir a postfijo
             float result = evaluateTokens(tokens);
             std::string postfix = infixToPostfix(tokens);
+            //added new code line
+            postfixHistory.push_back(postfix);
+
             std::cout << "Result: " << result << std::endl;
             history.push_back(expression + " = " + std::to_string(result));
             return true;

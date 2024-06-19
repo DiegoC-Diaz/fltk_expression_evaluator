@@ -38,7 +38,7 @@ public:
     std::map<std::string, double> variables;
     std::list<std::string> history;
     //Added new history for postfix expression
-    std::list<std::string> posfixHistory;
+    std::list<std::string> postfixHistory;
 };
 
 #endif // EVALUATOR_H

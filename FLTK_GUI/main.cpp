@@ -65,12 +65,12 @@ void eval_expression_callback(Fl_Widget* widget, void * data) {
 	std::string prev_hist= (my_data->history->value());
 
 
-	my_data->history->value((prev_hist + "\n" + value).c_str());
+	my_data->history->value((prev_hist+value+"\n").c_str());
 
 	std::string line="";
-	for (std::string it:evaluator->posfixHistory) {
+	for (std::string it:evaluator->postfixHistory) {
 		std::cout << line;
-		line = line + it;
+		line = line +it+"\n";
 		
 	}
 	my_data->postfix->value(line.c_str());
@@ -96,7 +96,7 @@ void assign_expression_callback(Fl_Widget* widget, void* data) {
 	evaluator->inputExpression(value.c_str(), true);
 
 	std::string prev = (my_data->history->value());
-	my_data->history->value((prev + "\n" + value).c_str());
+	my_data->history->value((prev+value+"\n").c_str());
 
 	variable_output->value("");//We clean var output;
 
