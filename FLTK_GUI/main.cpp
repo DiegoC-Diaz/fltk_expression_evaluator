@@ -216,6 +216,15 @@ void drawText(int x , int y, int w, int h,const char* text) {
 
 
 int main(int argc, char* argv[]) {
+
+	
+	std::cout << "Run TestCase Y/N :" << std::endl;
+	std::string Run;
+	std::getline(std::cin, Run);
+	if (Run == "Y" || Run == "y") {
+		int result = Catch::Session().run(argc, argv);
+	}
+
 	//Fl_Light_Button* lbutton = new Fl_Light_Button(x, y, width, height);
 	Evaluator* evaluator = new Evaluator();
 	Linker* link = new Linker();
@@ -269,6 +278,6 @@ int main(int argc, char* argv[]) {
 	window->show(argc, argv);
 
 	
-	//int result = Catch::Session().run(argc, argv);
+
 	return Fl::run();
 }
