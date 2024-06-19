@@ -57,46 +57,7 @@ bool Evaluator::isValidToken(const std::string& token, const std::map<std::strin
         constants.find(token) != constants.end() || variables.find(token) != variables.end();
 }
 
-std::vector<std::string> Evaluator::tokenize(const std::string& s, const std::map<std::string, double>& constants, std::map<std::string, double>& variables) {
-    std::vector<std::string> tokens;
-    std::string current;
-    for (char ch : s) {
-        if (std::isspace(ch) || isOperator(std::string(1, ch)) || ch == '(' || ch == ')') {
-            if (!current.empty()) {
-                tokens.push_back(current);
-                current.clear();
-            }
-            if (!std::isspace(ch)) {
-                tokens.push_back(std::string(1, ch));
-            }
-        }
-        else {
-            current += ch;
-        }
-    }
-    if (!current.empty()) {
-        tokens.push_back(current);
-    }
 
-    // Convert constants and variables to their numeric values
-    for (auto& token : tokens) {
-        if (constants.find(token) != constants.end()) {
-            token = std::to_string(constants.at(token));
-        }
-        else if (variables.find(token) != variables.end()) {
-            token = std::to_string(variables.at(token));
-        }
-    }
-
-    // Validate tokens
-    for (const auto& token : tokens) {
-        if (!isValidToken(token, constants, variables)) {
-            throw std::runtime_error("Invalid token: " + token);
-        }
-    }
-
-    return tokens;
-}
 
 std::string Evaluator::infixToPostfix(const std::vector<std::string>& tokens) {
     std::stack<std::string> stack;
@@ -160,13 +121,19 @@ float Evaluator::evaluatePostfix(const std::string& postfix) {
 }
 
 
+
 bool Evaluator::isValidExpression(const std::vector<std::string>& tokens) {
     int openParentheses = 0;
     bool lastWasOperator = true; // Asume que la expresión empieza incorrectamente con un operador
 
-    for (const auto& token : tokens) {
+    for (size_t i = 0; i < tokens.size(); ++i) {
+        const auto& token = tokens[i];
+
         if (token == "(") {
             openParentheses++;
+            if (i > 0 && (std::isdigit(tokens[i - 1][0]) || tokens[i - 1] == ")")) {
+                throw std::runtime_error("Invalid sequence: number or closing parenthesis before opening parenthesis without an operator");
+            }
             lastWasOperator = true; // Un paréntesis abierto después puede ser seguido por un operador
         }
         else if (token == ")") {
@@ -185,6 +152,9 @@ bool Evaluator::isValidExpression(const std::vector<std::string>& tokens) {
             lastWasOperator = true;
         }
         else {
+            if (i > 0 && tokens[i - 1] == ")") {
+                throw std::runtime_error("Invalid sequence: closing parenthesis before number without an operator");
+            }
             lastWasOperator = false;
         }
     }
@@ -201,6 +171,47 @@ bool Evaluator::isValidExpression(const std::vector<std::string>& tokens) {
     return true;
 }
 
+
+std::vector<std::string> Evaluator::tokenize(const std::string& s, const std::map<std::string, double>& constants, std::map<std::string, double>& variables) {
+    std::vector<std::string> tokens;
+    std::string current;
+    for (char ch : s) {
+        if (std::isspace(ch) || isOperator(std::string(1, ch)) || ch == '(' || ch == ')') {
+            if (!current.empty()) {
+                tokens.push_back(current);
+                current.clear();
+            }
+            if (!std::isspace(ch)) {
+                tokens.push_back(std::string(1, ch));
+            }
+        }
+        else {
+            current += ch;
+        }
+    }
+    if (!current.empty()) {
+        tokens.push_back(current);
+    }
+
+    // Convert constants and variables to their numeric values
+    for (auto& token : tokens) {
+        if (constants.find(token) != constants.end()) {
+            token = std::to_string(constants.at(token));
+        }
+        else if (variables.find(token) != variables.end()) {
+            token = std::to_string(variables.at(token));
+        }
+    }
+
+    // Validate tokens
+    for (const auto& token : tokens) {
+        if (!isValidToken(token, constants, variables)) {
+            throw std::runtime_error("Invalid token: " + token);
+        }
+    }
+
+    return tokens;
+}
 bool Evaluator::hasConsecutiveOperators(const std::vector<std::string>& tokens) {
     bool lastWasOperator = false;
     for (const auto& token : tokens) {
