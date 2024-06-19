@@ -1,8 +1,8 @@
 ## To run this porject:
 The following libraries from FLTK are required, if you are using visual studio 2020. 
 [https://courses.cs.washington.edu/courses/cse557/14au/tools/fltk_install.html]
-2. Configure MSVC (Microsoft Visual C++)
 
+2. Configure MSVC (Microsoft Visual C++)
 Open MSVC, and click Tools->Options.
 In the left pane, expland "Projects and Solutions"
 Choose "VC++ Directories"
