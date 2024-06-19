@@ -51,8 +51,7 @@ void eval_expression_callback(Fl_Widget* widget, void * data) {
 	// Access the data
 	Fl_Multiline_Input* input = my_data->expression;
 	Evaluator* evaluator = my_data->evaluator;
-
-
+	
 	//we need to add cusotm vairbales for user
 // through the table....
 // 
@@ -74,6 +73,7 @@ void eval_expression_callback(Fl_Widget* widget, void * data) {
 		
 	}
 	my_data->postfix->value(line.c_str());
+
 	//We could had  to clean teh output
 	std::string output=evaluator->displayHistory();
 	display_hist_output(my_data->output, output);
@@ -90,7 +90,12 @@ void assign_expression_callback(Fl_Widget* widget, void* data) {
 	Fl_Multiline_Output* variable_output = my_data->output;
 
 	std::string value = input->value();
-	if (value == "") {
+	if (value == "" || value.back() == '=') {
+
+
+		MessageBox(NULL, L"Invalid assign operation!", L"Error Setting Variable", MB_ICONERROR | MB_OK);
+
+		
 		return;
 	}
 	evaluator->inputExpression(value.c_str(), true);
@@ -200,5 +205,8 @@ int main(int argc, char** argv) {
 	var_link->expression = asignation_input;
 	window->end();
 	window->show(argc, argv);
+
+
+
 	return Fl::run();
 }

@@ -14,6 +14,11 @@
 #include <vector>
 #include <list>
 #include <stdexcept>
+//for error messages. 
+#include <windows.h>
+#include <codecvt> // for std::codecvt_utf8
+#include <locale>  // for std::wstring_convert
+
 
 class Evaluator {
 public:

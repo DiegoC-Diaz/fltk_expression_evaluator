@@ -304,6 +304,11 @@ bool Evaluator::inputExpression(const std::string& expression, bool isAssignment
             }
             catch (const std::exception& e) {
                 std::cerr << "Error setting variable: " << e.what() << std::endl;
+                std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+                std::wstring wideErrorMessage = converter.from_bytes(e.what());
+       
+                MessageBox(NULL, wideErrorMessage.c_str(), L"Error Setting Variable", MB_ICONERROR | MB_OK);
+          
                 return false;
             }
         }
@@ -338,6 +343,12 @@ bool Evaluator::inputExpression(const std::string& expression, bool isAssignment
         }
         catch (const std::exception& e) {
             std::cerr << "Error: " << e.what() << std::endl;
+
+            std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+            std::wstring wideErrorMessage = converter.from_bytes(e.what());
+
+            MessageBox(NULL, wideErrorMessage.c_str(), L"Error Setting Variable", MB_ICONERROR | MB_OK);
+
             return false;
         }
     }
