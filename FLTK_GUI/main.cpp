@@ -10,10 +10,78 @@
 #include "Evaluator.h"
 #include<iostream>
 #include "Table.h"
+#include "evaluator.h"
+#define CATCH_CONFIG_MAIN
+#include "catch.hpp"
 /*
 	Todo el coldigo comentado estara por eleminarse en siguientees versiones
 */
+TEST_CASE("Funciones infijas a postfijas", "InfixPostFix") {
 
+	SECTION("Infija a Postfija") {
+
+		Evaluator evaluator;
+
+		std::string tokens = "3 + 4";
+		std::string tokens1 = "5 - 2";
+		std::string tokens2 = "6 * 7";
+		std::string tokens3 = "8 / 4";
+		std::string tokens4 = "2 ^ 3";
+		std::string tokens5 = "3 + 4 * 5";
+		std::string tokens6 = "( 3 + 4 ) * 5";
+		std::string tokens7 = "6 * ( 7 + 8 )";
+		std::string tokens8 = "9 / ( 2 + 3 )";
+		std::string tokens9 = "( 4 + 5 ) / ( 6 - 3 )";
+		//Aqui empiezan los malos
+		std::string tokens10 = "3 + 4 - )";
+		std::string tokens11 = "( 6 + 7 * ( 8 - 4 )";
+		std::string tokens12 = "5 + ( 6 * 7 ) - ";
+		std::string tokens13 = "4 + ( 9 / )";
+		std::string tokens14 = "( 10 - 2 ) / ";
+		std::string tokens15 = "3 + 4 * - 6 / 2";
+		std::string tokens16 = "7 * ( 3 + 5 / 2";
+		std::string tokens17 = "( 6 + * 3 ) / ( 8 - 4 )";
+		std::string tokens18 = "2 * 3 + * 5";
+		std::string tokens19 = "( 1 + 2 ) * + 4 )";
+
+
+
+		/* Estsos son los casos Correctos
+		std::string tokens10= "3 + 4 - 5";
+		std::string tokens11= "( 6 + 7 ) * ( 8 - 4 )";
+		std::string tokens12= "5 + ( 6 * 7 ) - 8";
+		std::string tokens13= "4 + ( 9 / 3 )";
+		std::string tokens14= "( 10 - 2 ) / 4";
+		std::string tokens15 = "3 + 4 * 5 - 6 / 2";
+		std::string tokens16= "7 * ( 3 + 5 ) / 2";
+		std::string tokens17 = "( 6 + 2 * 3 ) / ( 8 - 4 )";
+		std::string tokens18 = "2 * 3 + 4 * 5";
+		std::string tokens19 = "( 1 + 2 ) * ( 3 + 4 )";
+
+	   */
+		CHECK(evaluator.inputExpression(tokens, false) == true);
+		CHECK(evaluator.inputExpression(tokens1, false) == true);
+		CHECK(evaluator.inputExpression(tokens2, false) == true);
+		CHECK(evaluator.inputExpression(tokens3, false) == true);
+		CHECK(evaluator.inputExpression(tokens4, false) == true);
+		CHECK(evaluator.inputExpression(tokens5, false) == true);
+		CHECK(evaluator.inputExpression(tokens6, false) == true);
+		CHECK(evaluator.inputExpression(tokens7, false) == true);
+		CHECK(evaluator.inputExpression(tokens8, false) == true);
+		CHECK(evaluator.inputExpression(tokens9, false) == true);
+
+		CHECK(evaluator.inputExpression(tokens10, false) == true);
+		CHECK(evaluator.inputExpression(tokens11, false) == true);
+		CHECK(evaluator.inputExpression(tokens12, false) == true);
+		CHECK(evaluator.inputExpression(tokens13, false) == true);
+		CHECK(evaluator.inputExpression(tokens14, false) == true);
+		CHECK(evaluator.inputExpression(tokens15, false) == true);
+		CHECK(evaluator.inputExpression(tokens16, false) == true);
+		CHECK(evaluator.inputExpression(tokens17, false) == true);
+		CHECK(evaluator.inputExpression(tokens18, false) == true);
+		CHECK(evaluator.inputExpression(tokens19, false) == true);
+	}
+}
 struct Linker {
 	Fl_Multiline_Input* expression;
 	Fl_Multiline_Output* output;
@@ -153,31 +221,31 @@ void drawText(int x , int y, int w, int h,const char* text) {
 
 
 
-int main(int argc, char** argv) {
+int main(int argc, char* argv[]) {
 	//Fl_Light_Button* lbutton = new Fl_Light_Button(x, y, width, height);
 	Evaluator* evaluator = new Evaluator();
-	Linker*link= new Linker();
+	Linker* link = new Linker();
 	Linker* var_link = new Linker();
 	//We link the evaluator with the struct Linker
 
 
 
-	Fl_Window* window = new Fl_Window(800,500);
+	Fl_Window* window = new Fl_Window(800, 500);
 
 	int x = 800;
 	int y = 500;
 	int widths = 200;
 
 	//Creating  Text Inputs and Otpus
-	Fl_Multiline_Output* out_put = new Fl_Multiline_Output((x / 2) - 100, (y / 2) - 150, widths, y/2 -100 +50, nullptr);
-	Fl_Multiline_Output* post_out_put = new Fl_Multiline_Output((x / 2) - 100, (y / 2)+70 ,widths, y / 2 - 100, nullptr);
-	Fl_Multiline_Output* History =new Fl_Multiline_Output(x -200,20, widths, y-40, nullptr);
+	Fl_Multiline_Output* out_put = new Fl_Multiline_Output((x / 2) - 100, (y / 2) - 150, widths, y / 2 - 100 + 50, nullptr);
+	Fl_Multiline_Output* post_out_put = new Fl_Multiline_Output((x / 2) - 100, (y / 2) + 70, widths, y / 2 - 100, nullptr);
+	Fl_Multiline_Output* History = new Fl_Multiline_Output(x - 200, 20, widths, y - 40, nullptr);
 	Fl_Multiline_Output* asignation_output = new Fl_Multiline_Output(20, 140, widths, y - 120);
-	Fl_Multiline_Input* asignation_input = new Fl_Multiline_Input(20,100,widths,20,"");
+	Fl_Multiline_Input* asignation_input = new Fl_Multiline_Input(20, 100, widths, 20, "");
 	Fl_Multiline_Input* input_expression = new Fl_Multiline_Input((x / 2) - 100, 20, widths, 50, nullptr);
 
 	drawText((x / 2) - 100, (y / 2) + 50, widths, 20, "Post Fix");
-	drawText(0, 0, x,20,"Constants\t\tEvaluator\t\tHistory");
+	drawText(0, 0, x, 20, "Constants\t\tEvaluator\t\tHistory");
 
 
 
@@ -206,7 +274,7 @@ int main(int argc, char** argv) {
 	window->end();
 	window->show(argc, argv);
 
-
-
+	
+	//int result = Catch::Session().run(argc, argv);
 	return Fl::run();
 }

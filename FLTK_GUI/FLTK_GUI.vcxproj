@@ -156,6 +156,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="catch.hpp" />
     <ClInclude Include="Evaluator.h" />
     <ClInclude Include="List.h" />
     <ClInclude Include="Table.h" />
